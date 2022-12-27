@@ -1,0 +1,9 @@
+[package]
+name = "wpr"
+version = "0.1.0"
+edition = "2021"
+authors = ["Keith Noguchi <hack@noguchi.us>"]
+
+[dependencies]
+actix-web = "4"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
