@@ -1,7 +1,12 @@
 use std::io;
-use wpr::run;
+use std::net::TcpListener;
+
+const ADDR: &str = "127.0.0.1:8000";
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
-    run()?.await
+    let addr = std::env::args().nth(1).unwrap_or_else(|| ADDR.to_string());
+    let listener = TcpListener::bind(addr)?;
+
+    wpr::run(listener)?.await
 }
