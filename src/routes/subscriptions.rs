@@ -1,7 +1,7 @@
 use actix_web::{web, HttpResponse};
 use chrono::Utc;
-use log::{error, info};
 use sqlx::PgPool;
+use tracing::{error, info};
 use uuid::Uuid;
 
 pub(crate) async fn subscribe(
