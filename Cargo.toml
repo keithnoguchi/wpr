@@ -15,6 +15,7 @@ name = "wpr"
 actix-web = "4"
 config = "0.13"
 chrono = { version = "0.4", default-features = false, features = ["clock"] }
+env_logger = "0.10"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 uuid = { version = "1", features = ["v4"] }
