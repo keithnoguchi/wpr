@@ -13,6 +13,7 @@ name = "wpr"
 
 [dependencies]
 actix-web = "4"
+config = "0.13"
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
 
