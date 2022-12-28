@@ -1,6 +1,9 @@
 use std::net::TcpListener;
 
-use sqlx::PgPool;
+use sqlx::{Connection, Executor, PgConnection, PgPool};
+use uuid::Uuid;
+
+use wpr::config::DatabaseSettings;
 
 struct TestApp {
     address: String,
@@ -8,14 +11,33 @@ struct TestApp {
 }
 
 impl TestApp {
+    async fn configure_database(config: &DatabaseSettings) -> PgPool {
+        let mut connection = PgConnection::connect(&config.connection_string_without_db())
+            .await
+            .expect("Failed to connect to postgres");
+        connection
+            .execute(format!(r#"CREATE DATABASE "{}";"#, config.database_name).as_str())
+            .await
+            .expect("Failed to create database");
+
+        let db_pool = PgPool::connect(&config.connection_string())
+            .await
+            .expect("Failed to connect to postgres");
+        sqlx::migrate!("./migrations")
+            .run(&db_pool)
+            .await
+            .expect("Failed to migrate the database");
+
+        db_pool
+    }
+
     async fn build() -> TestApp {
         let listener = TcpListener::bind("127.0.0.1:0").expect("Failed to bind ramdom port");
         let port = listener.local_addr().unwrap().port();
 
-        let config = wpr::config::load().expect("Failed to load configuration");
-        let db_pool = PgPool::connect(&config.database.connection_string())
-            .await
-            .expect("Failed to connect to postgres");
+        let mut config = wpr::config::load().expect("Failed to load configuration");
+        config.database.database_name = Uuid::new_v4().to_string();
+        let db_pool = Self::configure_database(&config.database).await;
 
         let server = wpr::startup::run(listener, db_pool.clone()).expect("Failed to bind address");
         let _ = tokio::spawn(server);
