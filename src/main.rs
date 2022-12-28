@@ -8,5 +8,5 @@ async fn main() -> io::Result<()> {
     let addr = std::env::args().nth(1).unwrap_or_else(|| ADDR.to_string());
     let listener = TcpListener::bind(addr)?;
 
-    wpr::run(listener)?.await
+    wpr::startup::run(listener)?.await
 }
