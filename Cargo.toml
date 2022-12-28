@@ -14,8 +14,10 @@ name = "wpr"
 [dependencies]
 actix-web = "4"
 config = "0.13"
+chrono = { version = "0.4", default-features = false, features = ["clock"] }
 serde = { version = "1", features = ["derive"] }
 tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+uuid = { version = "1", features = ["v4"] }
 
 [dependencies.sqlx]
 version = "0.6"
